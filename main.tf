@@ -107,10 +107,24 @@ resource "azurerm_virtual_machine" "example" {
     admin_username = "testadmin"
     admin_password = "Password1234!"
   }
+  
 
   os_profile_linux_config {
     disable_password_authentication = false
   }
+provisioner "remote-exec" {
+        connection {
+            type     = "ssh"
+            host     = azurerm_public_ip.mypubliclinuxip.id
+            user     = "testadmin"
+            password = "Password1234!"
+        }
+
+    inline = [
+      "sudo apt-get update",
+      "sudo apt-get install nginx",
+    ]
+    }
 
   tags = {
     environment = "${var.omgeving}"
