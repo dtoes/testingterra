@@ -103,7 +103,11 @@ resource "azurerm_linux_virtual_machine" "example" {
     sku       = "16.04-LTS"
     version   = "latest"
   }
- 
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+  
 provisioner "remote-exec" {
     connection {
         type     = "ssh"
