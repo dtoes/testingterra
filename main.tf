@@ -81,52 +81,43 @@ resource "azurerm_network_security_group" "webserver" {
     }
 }
 
-resource "azurerm_virtual_machine" "example" {
-  name                  = "${var.prefix}-lx"
-  location              = azurerm_resource_group.main.location
-  resource_group_name   = azurerm_resource_group.main.name
-  network_interface_ids = [azurerm_network_interface.linux.id]
-  vm_size               = "Standard_F2"
+resource "azurerm_linux_virtual_machine" "example" {
+  name                 = "${var.prefix}-lx"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  size                = "Standard_F2"
+  admin_username      = "adminuser"
+  admin_password      = "Password1234!"
+  network_interface_ids = [
+    azurerm_network_interface.linux.id,
+  ]
 
-  storage_image_reference {
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
     sku       = "16.04-LTS"
     version   = "latest"
   }
-
-  storage_os_disk {
-    name              = "${var.prefix}-osdisk"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-
-  os_profile {
-    computer_name  = "Linux machine"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = false
-  }
-
-    provisioner "remote-exec" {
-        connection {
-            type     = "ssh"
-            host     = azurerm_public_ip.mypubliclinuxip.id
-            user     = "testadmin"
-            password = "Password1234!"
+ 
+provisioner "remote-exec" {
+    connection {
+        type     = "ssh"
+        host     = azurerm_public_ip.mypubliclinuxip.id
+        user     = "adminuser"
+        password = "Password1234!"
         }
 
-        inline = [
+    inline = [
         "sudo apt-get update",
         "sudo apt-get install nginx"
         ]
     }
-
-  tags = {
+    tags = {
     environment = "${var.omgeving}"
     }
 }
