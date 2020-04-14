@@ -112,18 +112,6 @@ resource "azurerm_virtual_machine" "example" {
     disable_password_authentication = false
   }
 
-  provisioner "file" {
-        connection {
-            type     = "ssh"
-            host     = azurerm_public_ip.mypubliclinuxip.id
-            user     = "testadmin"
-            password = "Password1234!"
-        }
-
-        source      = "newfile.txt"
-        destination = "/newfile.txt"
-    }
-
     provisioner "remote-exec" {
         connection {
             type     = "ssh"
