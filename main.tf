@@ -62,7 +62,7 @@ resource "azurerm_network_security_group" "webserver" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     source_address_prefix      = "*"
-    destination_port_range     = "443"
+    destination_port_range     = "80"
     destination_address_prefix = azurerm_subnet.intern.address_prefix
   }
     security_rule {
@@ -112,19 +112,7 @@ resource "azurerm_virtual_machine" "example" {
   os_profile_linux_config {
     disable_password_authentication = false
   }
-provisioner "remote-exec" {
-        connection {
-            type     = "ssh"
-            host     = azurerm_public_ip.mypubliclinuxip.id
-            user     = "testadmin"
-            password = "Password1234!"
-        }
 
-    inline = [
-      "sudo apt-get update",
-      "sudo apt-get install nginx",
-    ]
-    }
 
   tags = {
     environment = "${var.omgeving}"
