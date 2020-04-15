@@ -1,6 +1,6 @@
 variable "prefix" {
   description = "Naamgeving voor de verschillende resources die aangemaakt worden"
-  default = "Test30"
+  default = "test33"
 }
 
 variable "location" {
